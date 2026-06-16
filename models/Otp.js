@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 
 const otpSchema = new mongoose.Schema(
     {
-        mobile:String,
+        mobile:{
+            type: String,
+            required:true,
+            unique:true
+        },
         type:String,
         otp:String,
         expires_at : Date

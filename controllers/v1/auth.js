@@ -1,7 +1,7 @@
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
-const Otp = require("../models/Otp");
+const User = require("../../models/user");
+const Otp = require("../../models/otp");
 
 exports.sendOtp = async (req, res) => {
     try {
@@ -42,10 +42,18 @@ exports.sendOtp = async (req, res) => {
 
     } catch (error) {
 
-        return res.status(500).json({
-            success: false,
-            message: error.message
-        });
+        if(process.env.ENVIRMENT === "development"){
+             return res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }else{
+            return res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            });
+        }
+       
 
     }
 };
@@ -226,10 +234,18 @@ exports.verifyOtp = async (req, res) => {
 
     } catch (error) {
 
-        return res.status(500).json({
-            success: false,
-            message: error.message
-        });
+        if(process.env.ENVIRMENT === "development"){
+             return res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }else{
+            return res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            });
+        }
+        
 
     }
 
@@ -240,16 +256,25 @@ exports.profile = async (req, res) => {
 
         const user = User.findById(req.user.user_id);
 
-        return res.json({
+        return res.status(200).json({
             status:true,
             data:user
         });
             
         
     }catch(error){
-        return res.status(500).json({
-            status:false,
-            message:error.message
-        });
+
+        if(process.env.ENVIRMENT === "development"){
+            return res.status(500).json({
+                status:false,
+                message:error.message
+            });
+        }else{
+            return res.status(500).json({
+                success: false,
+                message: "Internal Server Error"
+            });
+        }
+       
     }
 }

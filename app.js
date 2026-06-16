@@ -4,11 +4,10 @@ const express = require("express");
 const cors = require("cors");
 
 const connectDb = require("./config/db");
-const authRoutes = require("./routes/authRoutes");
+const routes = require("./routes/v1/index");
 
 const app = express();
 
-// Database Connection
 connectDb();
 
 // Middlewares
@@ -16,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use("/api/auth", authRoutes);
+app.use("/api/v1", routes);
 
 // Default Route
 app.get("/", (req, res) => {
