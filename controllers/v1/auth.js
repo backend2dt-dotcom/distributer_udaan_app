@@ -10,6 +10,13 @@ exports.sendOtp = async (req, res) => {
 
         const { mobile } = req.body;
 
+        if (!mobile) {
+            return res.status(400).json({
+                status: false,
+                message: "Mobile is required"
+            });
+        }
+
         const response = await axios.get(
             `${process.env.DISTRIBUTER_API_URL}/${mobile}`
         );
@@ -110,8 +117,7 @@ exports.verifyOtp = async (req, res) => {
             });
         }
 
-        const distributor =
-            response.data.data[0];
+        const distributor = response?.data?.data;
 
         let user =
             await User.findOne({
