@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../../models/user");
 const Otp = require("../../models/otp");
 
+
+
 exports.sendOtp = async (req, res) => {
     try {
 
@@ -11,11 +13,11 @@ exports.sendOtp = async (req, res) => {
         const response = await axios.get(
             `${process.env.DISTRIBUTER_API_URL}/${mobile}`
         );
+        
 
-        if (
-            !response.data.status ||
-            !response.data.data.length
-        ) {
+       const distributorData = response?.data?.data;
+
+        if (!response?.data?.status || !distributorData) {
             return res.status(404).json({
                 success: false,
                 message: "Distributor Not Found"
@@ -23,6 +25,7 @@ exports.sendOtp = async (req, res) => {
         }
 
         const otp = "123456";
+        // const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
         await Otp.deleteMany({ mobile });
 
@@ -42,7 +45,7 @@ exports.sendOtp = async (req, res) => {
 
     } catch (error) {
 
-        if(process.env.ENVIRMENT === "development"){
+        if(process.env.ENVIRONMENT === "development"){
              return res.status(500).json({
                 success: false,
                 message: error.message
@@ -87,15 +90,20 @@ exports.verifyOtp = async (req, res) => {
             });
         }
 
+        if (otpData.expires_at < new Date()) {
+            return res.status(400).json({
+                success: false,
+                message: "OTP expired"
+            });
+        }
+
         const response = await axios.get(
             `${process.env.DISTRIBUTER_API_URL}/${mobile}`
         );
 
-        if (
-            !response.data.status ||
-            !response.data.data.length
-        ) {
+       const distributorData = response?.data?.data;
 
+        if (!response?.data?.status || !distributorData) {
             return res.status(404).json({
                 success: false,
                 message: "Distributor Not Found"
@@ -234,7 +242,7 @@ exports.verifyOtp = async (req, res) => {
 
     } catch (error) {
 
-        if(process.env.ENVIRMENT === "development"){
+        if(process.env.ENVIRONMENT === "development"){
              return res.status(500).json({
                 success: false,
                 message: error.message
@@ -254,7 +262,7 @@ exports.verifyOtp = async (req, res) => {
 exports.profile = async (req, res) => {
     try{
 
-        const user = User.findById(req.user.user_id);
+        const user = await User.findById(req.user.user_id);
 
         return res.status(200).json({
             status:true,
@@ -264,7 +272,7 @@ exports.profile = async (req, res) => {
         
     }catch(error){
 
-        if(process.env.ENVIRMENT === "development"){
+        if(process.env.ENVIRONMENT === "development"){
             return res.status(500).json({
                 status:false,
                 message:error.message
@@ -276,5 +284,59 @@ exports.profile = async (req, res) => {
             });
         }
        
+    }
+}
+
+
+exports.resendOtp = async (req, res) => {
+    try{
+
+        const { mobile } = req.body;
+
+        const response = await axios.get(
+            `${process.env.DISTRIBUTER_API_URL}/${mobile}`
+        );
+
+        const distributorData = response?.data?.data;
+
+        if (!response?.data?.status || !distributorData) {
+            return res.status(404).json({
+                success: false,
+                message: "Distributor Not Found"
+            });
+        }
+
+        const otp = "123456";
+        // const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        await Otp.deleteMany({ mobile });
+
+        await Otp.create({
+            mobile,
+            otp,
+            expires_at: new Date(
+                Date.now() + 5 * 60 * 1000
+            )
+        });
+
+        return res.json({
+            success: true,
+            message: "OTP Sent",
+            otp
+        });
+
+
+    }catch(error){
+        if(process.env.ENVIRONMENT === "development"){
+            return res.status(500).json({
+                status:false,
+                message:error.message
+            });
+        }else{
+            return res.status(500).json({
+                status:false,
+                message:"Internal Server Error"
+            });
+        }
     }
 }
