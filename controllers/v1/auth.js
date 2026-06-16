@@ -19,7 +19,7 @@ exports.sendOtp = async (req, res) => {
 
         if (!response?.data?.status || !distributorData) {
             return res.status(404).json({
-                success: false,
+                status: false,
                 message: "Distributor Not Found"
             });
         }
@@ -38,7 +38,7 @@ exports.sendOtp = async (req, res) => {
         });
 
         return res.json({
-            success: true,
+            status: true,
             message: "OTP Sent",
             otp
         });
@@ -47,12 +47,12 @@ exports.sendOtp = async (req, res) => {
 
         if(process.env.ENVIRONMENT === "development"){
              return res.status(500).json({
-                success: false,
+                status: false,
                 message: error.message
             });
         }else{
             return res.status(500).json({
-                success: false,
+                status: false,
                 message: "Internal Server Error"
             });
         }
@@ -85,14 +85,14 @@ exports.verifyOtp = async (req, res) => {
         if (!otpData) {
 
             return res.status(400).json({
-                success: false,
+                status: false,
                 message: "Invalid OTP"
             });
         }
 
         if (otpData.expires_at < new Date()) {
             return res.status(400).json({
-                success: false,
+                status: false,
                 message: "OTP expired"
             });
         }
@@ -105,7 +105,7 @@ exports.verifyOtp = async (req, res) => {
 
         if (!response?.data?.status || !distributorData) {
             return res.status(404).json({
-                success: false,
+                status: false,
                 message: "Distributor Not Found"
             });
         }
@@ -214,14 +214,9 @@ exports.verifyOtp = async (req, res) => {
         const token =
             jwt.sign(
                 {
-                    user_id:
-                        user._id,
-
-                    distributor_id:
-                        distributor.id,
-
-                    mobile:
-                        distributor.mobile1
+                    user_id: user._id,
+                    distributor_id:distributor.id,
+                    mobile:distributor.mobile1
                 },
                 process.env.JWT_SECRET,
                 {
@@ -234,7 +229,7 @@ exports.verifyOtp = async (req, res) => {
         });
 
         return res.json({
-            success: true,
+            status: true,
             message: "Login Successful",
             token,
             user
@@ -244,12 +239,12 @@ exports.verifyOtp = async (req, res) => {
 
         if(process.env.ENVIRONMENT === "development"){
              return res.status(500).json({
-                success: false,
+                status: false,
                 message: error.message
             });
         }else{
             return res.status(500).json({
-                success: false,
+                status: false,
                 message: "Internal Server Error"
             });
         }
@@ -279,7 +274,7 @@ exports.profile = async (req, res) => {
             });
         }else{
             return res.status(500).json({
-                success: false,
+                status: false,
                 message: "Internal Server Error"
             });
         }
@@ -301,7 +296,7 @@ exports.resendOtp = async (req, res) => {
 
         if (!response?.data?.status || !distributorData) {
             return res.status(404).json({
-                success: false,
+                status: false,
                 message: "Distributor Not Found"
             });
         }
@@ -320,7 +315,7 @@ exports.resendOtp = async (req, res) => {
         });
 
         return res.json({
-            success: true,
+            status: true,
             message: "OTP Sent",
             otp
         });

@@ -10,14 +10,11 @@ const app = express();
 
 connectDb();
 
-// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Routes
 app.use("/api/v1", routes);
 
-// Default Route
 app.get("/", (req, res) => {
     res.json({
         success: true,
