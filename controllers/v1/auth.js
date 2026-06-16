@@ -79,9 +79,7 @@ exports.verifyOtp = async (req, res) => {
             otp,
             device_token,
             device_id,
-            device_name,
-            device_type,
-            app_version
+            device_type
         } = req.body;
 
         const otpData = await Otp.findOne({
@@ -168,11 +166,7 @@ exports.verifyOtp = async (req, res) => {
 
                 device_id,
 
-                device_name,
-
                 device_type,
-
-                app_version,
 
                 login_count: 1,
 
@@ -200,14 +194,10 @@ exports.verifyOtp = async (req, res) => {
             user.device_id =
                 device_id;
 
-            user.device_name =
-                device_name;
 
             user.device_type =
                 device_type;
 
-            user.app_version =
-                app_version;
 
             user.last_login =
                 new Date();

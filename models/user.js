@@ -36,17 +36,12 @@ const userSchema = new mongoose.Schema({
         default: null
     },
 
-    device_name: {
-        type: String,
-        default: null
-    },
 
     device_type: {
         type: String,
         default: "android"
     },
 
-    app_version: String,
 
     login_count: {
         type: Number,
