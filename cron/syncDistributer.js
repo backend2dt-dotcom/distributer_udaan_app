@@ -1,7 +1,7 @@
 const cron = require("node-cron");
 const axios = require("axios");
 
-cron.schedule("*/30 * * *", async () => {
+cron.schedule("* * * * *", async () => {
     try {
 
         console.log("Starting Sync...");
