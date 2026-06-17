@@ -117,95 +117,62 @@ exports.verifyOtp = async (req, res) => {
 
         const distributor = response?.data?.data;
 
-        let user =
-            await User.findOne({
-                distributor_id:
-                    distributor.id
-            });
+        const user = await User.findOneAndUpdate(
 
-        const address =
-            `${distributor.oaddress1 || ''} ${distributor.oaddress2 || ''} ${distributor.oaddress3 || ''}`;
+            {
+                distributor_id: distributor.id
+            },
 
-        if (!user) {
+            {
+                $set: {
 
-            user = await User.create({
+                    distributor_id:
+                        distributor.id,
 
-                distributor_id:
-                    distributor.id,
+                    app_id:
+                        distributor.app_id,
 
-                app_id:
-                    distributor.app_id,
+                    sap_code:
+                        distributor.sap_code,
 
-                sap_code:
-                    distributor.sap_code,
+                    firm:
+                        distributor.firm,
 
-                firm:
-                    distributor.firm,
+                    mobile:
+                        distributor.mobile1,
 
-                mobile:
-                    distributor.mobile1,
+                    email:
+                        distributor.email,
 
-                email:
-                    distributor.email,
+                    distributor_data:
+                        distributor,
 
-                city:
-                    distributor.city,
+                    device_token,
 
-                district:
-                    distributor.district,
+                    device_id,
 
-                state:
-                    distributor.state,
+                    device_type,
 
-                pincode:
-                    distributor.pincode,
+                    last_login:
+                        new Date(),
 
-                address,
+                    last_sync_at:
+                        new Date(),
 
-                device_token,
+                    is_active:
+                        true
+                },
 
-                device_id,
+                $inc: {
+                    login_count: 1
+                }
+            },
 
-                device_type,
-
-                login_count: 1,
-
-                last_login:
-                    new Date()
-            });
-
-        } else {
-
-            user.firm =
-                distributor.firm;
-
-            user.mobile =
-                distributor.mobile1;
-
-            user.email =
-                distributor.email;
-
-            user.address =
-                address;
-
-            user.device_token =
-                device_token;
-
-            user.device_id =
-                device_id;
-
-
-            user.device_type =
-                device_type;
-
-
-            user.last_login =
-                new Date();
-
-            user.login_count += 1;
-
-            await user.save();
-        }
+            {
+                new: true,
+                upsert: true
+            }
+        );
 
         const token =
             jwt.sign(
@@ -251,32 +218,17 @@ exports.verifyOtp = async (req, res) => {
 };
 
 exports.profile = async (req, res) => {
-    try{
 
-        const user = await User.findById(req.user.user_id);
+    const user =
+        await User.findById(
+            req.user.user_id
+        );
 
-        return res.status(200).json({
-            status:true,
-            data:user
-        });
-            
-        
-    }catch(error){
-
-        if(process.env.ENVIRONMENT === "development"){
-            return res.status(500).json({
-                status:false,
-                message:error.message
-            });
-        }else{
-            return res.status(500).json({
-                status: false,
-                message: "Internal Server Error"
-            });
-        }
-       
-    }
-}
+    return res.json({
+        status: true,
+        data: user
+    });
+};
 
 
 exports.resendOtp = async (req, res) => {
@@ -331,3 +283,18 @@ exports.resendOtp = async (req, res) => {
         }
     }
 }
+
+exports.logout = async (req, res) => {
+
+    await User.findByIdAndUpdate(
+        req.user.user_id,
+        {
+            device_token: null
+        }
+    );
+
+    return res.json({
+        status: true,
+        message: "Logged Out"
+    });
+};

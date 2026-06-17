@@ -1,30 +1,34 @@
 const mongoose = require("mongoose");
+
 const userSchema = new mongoose.Schema({
-     distributor_id: {
+
+    distributor_id: {
         type: Number,
         required: true,
-        unique: true
+        unique: true,
+        index: true
     },
 
-    app_id: String,
+    app_id: {
+        type: String,
+        index: true
+    },
 
-    sap_code: String,
+    mobile: {
+        type: String,
+        index: true
+    },
 
     firm: String,
 
-    mobile: String,
+    sap_code: String,
 
     email: String,
 
-    city: String,
-
-    district: String,
-
-    state: String,
-
-    pincode: String,
-
-    address: String,
+    distributor_data: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+    },
 
     device_token: {
         type: String,
@@ -36,12 +40,10 @@ const userSchema = new mongoose.Schema({
         default: null
     },
 
-
     device_type: {
         type: String,
         default: "android"
     },
-
 
     login_count: {
         type: Number,
@@ -50,15 +52,15 @@ const userSchema = new mongoose.Schema({
 
     last_login: Date,
 
+    last_sync_at: Date,
+
     is_active: {
         type: Boolean,
         default: true
     }
+
 }, {
     timestamps: true
 });
-
-
-
 
 module.exports = mongoose.model("User", userSchema);

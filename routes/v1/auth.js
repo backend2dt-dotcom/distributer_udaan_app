@@ -7,7 +7,8 @@ const authMiddleware = require("../../middleware/authMiddleware");
 
 router.post("/send-otp", authController.sendOtp);
 router.post("/verify-otp", authController.verifyOtp);
-router.get("/profile", authController.profile);
+router.get("/profile", authMiddleware, authController.profile);
 router.post("/resend-otp", authController.resendOtp);
+router.post("/logout", authMiddleware, authController.logout);
 
 module.exports = router;
