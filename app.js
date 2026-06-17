@@ -17,12 +17,12 @@ app.use(express.json());
 
 app.use("/api/v1", routes);
 
-// app.get("/", (req, res) => {
-//     res.json({
-//         success: true,
-//         message: "DB Udaan API Running"
-//     });
-// });
+app.get("/", (req, res) => {
+    res.json({
+        success: true,
+        message: "DB Udaan API Running"
+    });
+});
 
 
 
