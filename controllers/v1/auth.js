@@ -219,7 +219,7 @@ exports.verifyOtp = async (req, res) => {
 
 exports.profile = async (req, res) => {
     const user = await User.findById(req.user.user_id)
-        .select("mobile distributor_data.user_profile.name distributor_data.user_profile.profile_image distributor_data.verification_details_gst distributor_data.user_profile.pan_no distributor_data.user_profile.dl_no");
+        .select("mobile distributor_data.user_profile.name distributor_data.user_profile.profile_image distributor_data.verification_details_gst distributor_data.user_profile.pan_no distributor_data.user_profile.dl_no distributor_data.email distributor_data.division user_profile.emp_id user_profile.org_id user_profile.designation");
 
     const formatted = {
         name: user?.distributor_data?.user_profile?.name,
@@ -228,7 +228,12 @@ exports.profile = async (req, res) => {
         gstnumber: user?.distributor_data?.verification_details_gst,
         pancard_number: user?.distributor_data?.user_profile?.pan_no,
         dl_21b: user?.distributor_data?.user_profile?.dl_no, // adjust mapping if different
-        dl_21c: null // only if exists in DB
+        dl_21c: null, // only if exists in DB
+        email: user?.distributor_data?.email?.email, // only if exists in DB
+        division: user?.distributor_data?.division?.division,
+        emp_id: user?.user_profile?.emp_id?.emp_id,
+        org_id: user?.user_profile?.org_id?.org_id,
+        designation: user?.user_profile?.designation?.designation,
     };
 
     return res.json({
