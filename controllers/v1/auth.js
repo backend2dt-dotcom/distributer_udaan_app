@@ -218,15 +218,22 @@ exports.verifyOtp = async (req, res) => {
 };
 
 exports.profile = async (req, res) => {
+    const user = await User.findById(req.user.user_id)
+        .select("mobile distributor_data.user_profile.name distributor_data.user_profile.profile_image distributor_data.verification_details_gst distributor_data.user_profile.pan_no distributor_data.user_profile.dl_no");
 
-    const user =
-        await User.findById(
-            req.user.user_id
-        );
+    const formatted = {
+        name: user?.distributor_data?.user_profile?.name,
+        image: user?.distributor_data?.user_profile?.profile_image,
+        mobile: user?.mobile,
+        gstnumber: user?.distributor_data?.verification_details_gst,
+        pancard_number: user?.distributor_data?.user_profile?.pan_no,
+        dl_21b: user?.distributor_data?.user_profile?.dl_no, // adjust mapping if different
+        dl_21c: null // only if exists in DB
+    };
 
     return res.json({
         status: true,
-        data: user
+        data: formatted
     });
 };
 

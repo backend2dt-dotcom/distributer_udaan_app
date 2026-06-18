@@ -1,5 +1,7 @@
 const axios = require("axios");
 const User = require("../../models/user");
+const uploadToS3 = require("../../helpers/uploadToS3");
+// const {syncDocuments} = require("../../helpers/syncDocuments");
 
 exports.syncDistributers = async (req, res) => {
     try {
@@ -14,6 +16,7 @@ exports.syncDistributers = async (req, res) => {
         let syncCount = 0;
 
         for (const distributer of distributers) {
+            // distributer = await syncDocuments(distributer);
 
             await User.updateOne(
                 {
@@ -69,6 +72,5 @@ exports.syncDistributers = async (req, res) => {
             status: false,
             message: error.message
         });
-
     }
 };
